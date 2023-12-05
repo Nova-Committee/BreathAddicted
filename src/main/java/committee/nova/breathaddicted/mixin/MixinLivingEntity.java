@@ -24,12 +24,11 @@ public abstract class MixinLivingEntity extends Entity {
 
     @Inject(method = "actuallyHurt", at = @At("HEAD"), cancellable = true)
     private void inject$actuallyHurt(DamageSource dmg, float value, CallbackInfo ci) {
-        final LivingEntity thisInstance = (LivingEntity) (Object) this;
-        if (!(thisInstance instanceof EnderMan e) || !dmg.is(DamageTypes.DRAGON_BREATH)) return;
+        if (!dmg.is(DamageTypes.DRAGON_BREATH)) return;
+        if (!((LivingEntity) (Object) this instanceof EnderMan e)) return;
         ci.cancel();
+        if (e.getTarget() != null) e.setTarget(null);
         if (level().getDifficulty().getId() < 3) return;
         heal(value);
-        if (e.getTarget() != null) return;
-        e.setTarget(level().getNearestPlayer(e, 64.0));
     }
 }
